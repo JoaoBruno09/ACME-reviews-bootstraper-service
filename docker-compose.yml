@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: reviews-db
+    image: postgres
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=reviewsBT
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+    networks:
+      - acme
+
+  app:
+    build: .
+    ports:
+      - "3001:3000"
+    networks:
+      - acme
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: reviewsBT
+
+networks:
+  acme:
+    external: true
+
+volumes:
+  db-data:
