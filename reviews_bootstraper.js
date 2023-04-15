@@ -85,9 +85,10 @@ async function main() {
 
   //Votes table
   client.query(`CREATE TABLE IF NOT EXISTS Votes (
-    voteId SERIAL PRIMARY KEY,
+    "voteId" SERIAL PRIMARY KEY,
+    vid VARCHAR(255) NOT NULL,
     vote VARCHAR(255) NOT NULL,
-    reviewId BIGINT NOT NULL,
+    rid VARCHAR(255) NOT NULL,
     userId BIGINT NOT NULL
   ) `, (err, res) => { 
     if (err) {
@@ -263,6 +264,16 @@ async function createQueueAndListener() {
            
         case 'review-deleted':
           client.query(`DELETE FROM Reviews WHERE RID='${object.RID}'`, (err, res) => { 
+            if (err) {
+              console.error('Error performing query:', err.stack);
+            } else {
+              console.log('Query result:', res.rows);
+            }
+          });
+          break;
+        case 'vote-header':
+          client.query(`INSERT INTO Votes (vid, vote, "rid", "userId")
+          VALUES('${object.vid}', '${object.vote}', '${object.rid}', '${object.userId}')`, (err, res) => {  
             if (err) {
               console.error('Error performing query:', err.stack);
             } else {
