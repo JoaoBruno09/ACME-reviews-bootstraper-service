@@ -80,21 +80,39 @@ async function main() {
       console.error('Error performing query:', err.stack);
     } else {
       console.log('Query result:', res.rows);  
+
+      client.query(`INSERT INTO Reviews (version, "approvalStatus", "reviewText", "publishingDate", "funFact", vote, "productSku", "userId", rid)
+          VALUES('0', 'approved', 'this is just a test', '2023-03-03', 'please work', '0', 'd63h57d738s1', '2', 'R11111111')`,
+           (err, res) => {
+            if (err) {
+              console.error('Error performing query:', err.stack);
+            } else {
+              console.log('Query result:', res.rows);
+            }
+           });
     }
   })
 
   //Votes table
   client.query(`CREATE TABLE IF NOT EXISTS Votes (
-    "voteId" SERIAL PRIMARY KEY,
+    "voteID" SERIAL PRIMARY KEY,
     vid VARCHAR(255) NOT NULL,
     vote VARCHAR(255) NOT NULL,
     rid VARCHAR(255) NOT NULL,
-    userId BIGINT NOT NULL
+    "userID" BIGINT NOT NULL
   ) `, (err, res) => { 
     if (err) {
       console.error('Error performing query:', err.stack);
     } else {
       console.log('Query result:', res.rows);  
+
+      client.query(`INSERT INTO Votes (vid, vote, rid, "userID") VALUES ('V11111111', 'upVote', 'R11111111', '2')`, (err, res) => {
+        if (err) {
+          console.error('Error performing query:', err.stack);
+        } else {
+          console.log('Query result:', res.rows);
+        }
+      })
     }
   }) 
 
@@ -252,8 +270,8 @@ async function createQueueAndListener() {
           break;
 
         case 'review-moderated':
-          client.query(`UPDATE Reviews SET version='${object.version}', approvalStatus='${object.approvalStatus}'
-          WHERE RID='${object.RID}'`, (err, res) => {
+          client.query(`UPDATE Reviews SET version='${object.version}', "approvalStatus"='${object.approvalStatus}'
+          WHERE rid='${object.rid}'`, (err, res) => {
             if (err) {
               console.error('Error performing query:', err.stack);
             } else {
@@ -263,7 +281,7 @@ async function createQueueAndListener() {
           break;
            
         case 'review-deleted':
-          client.query(`DELETE FROM Reviews WHERE RID='${object.RID}'`, (err, res) => { 
+          client.query(`DELETE FROM Reviews WHERE rid='${object.rid}'`, (err, res) => { 
             if (err) {
               console.error('Error performing query:', err.stack);
             } else {
@@ -272,8 +290,8 @@ async function createQueueAndListener() {
           });
           break;
         case 'vote-header':
-          client.query(`INSERT INTO Votes (vid, vote, "rid", "userId")
-          VALUES('${object.vid}', '${object.vote}', '${object.rid}', '${object.userId}')`, (err, res) => {  
+          client.query(`INSERT INTO Votes (vid, vote, "rid", "userID")
+          VALUES('${object.vid}', '${object.vote}', '${object.rid}', '${object.userID}')`, (err, res) => {  
             if (err) {
               console.error('Error performing query:', err.stack);
             } else {
