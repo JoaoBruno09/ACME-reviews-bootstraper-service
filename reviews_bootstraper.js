@@ -80,16 +80,6 @@ async function main() {
       console.error('Error performing query:', err.stack);
     } else {
       console.log('Query result:', res.rows);  
-
-      client.query(`INSERT INTO Reviews (version, "approvalStatus", "reviewText", "publishingDate", "funFact", vote, "productSku", "userId", rid)
-          VALUES('0', 'approved', 'this is just a test', '2023-03-03', 'please work', '0', 'd63h57d738s1', '2', 'R11111111')`,
-           (err, res) => {
-            if (err) {
-              console.error('Error performing query:', err.stack);
-            } else {
-              console.log('Query result:', res.rows);
-            }
-           });
     }
   })
 
@@ -105,14 +95,6 @@ async function main() {
       console.error('Error performing query:', err.stack);
     } else {
       console.log('Query result:', res.rows);  
-
-      client.query(`INSERT INTO Votes (vid, vote, rid, "userID") VALUES ('V11111111', 'upVote', 'R11111111', '2')`, (err, res) => {
-        if (err) {
-          console.error('Error performing query:', err.stack);
-        } else {
-          console.log('Query result:', res.rows);
-        }
-      })
     }
   }) 
 
